@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4f858764-0afb-4ef8-bc5a-298d7d2e0c0a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.buildship.core.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.settings/org.eclipse.buildship.core.prefs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/judge.toml" beforeDir="false" afterPath="$PROJECT_DIR$/judge.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/analyser/Analyser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/analyser/SymbolEntry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/error/AnalyzeError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/error/CompileError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/error/ErrorCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/error/ExpectedTokenError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/error/TokenizeError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/instruction/Instruction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/instruction/Operation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/StringIter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/TokenType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Tokenizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Tokenizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/util/Pos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/util/Pos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/vm/MiniVm.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/miniplc0java/AnalyserTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/miniplc0java/MiniVmTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/miniplc0java/TokenizerTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="https://github.com/SKT-T1-Thecai/miniplc0-java" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1j5BMcKmnYyLZj9TrVbbBF5c9yo" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="show.unlinked.gradle.project.popup" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\C0_new" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\C0_new\src\main\java\miniplc0java" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.App">
+    <configuration name="Analysizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="analysizer.Analysizer" />
+      <module name="miniplc0java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="analysizer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="App (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="App" />
+      <module name="miniplc0java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="miniplc0java.App" />
+      <module name="miniplc0java.main" />
+      <option name="PROGRAM_PARAMETERS" value="-l -o $PROJECT_DIR$/build/libs/test.txt $PROJECT_DIR$/build/libs/1.txt" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="miniplc0java.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Pos" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="miniplc0java.util.Pos" />
+      <module name="miniplc0java.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="miniplc0java.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MiniVmTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;miniplc0java.MiniVmTest&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.App" />
+      <item itemvalue="Application.Pos" />
+      <item itemvalue="Application.Analysizer" />
+      <item itemvalue="Application.App (1)" />
+      <item itemvalue="Gradle.MiniVmTest" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.App" />
+        <item itemvalue="Application.App (1)" />
+        <item itemvalue="Application.Analysizer" />
+        <item itemvalue="Application.Pos" />
+        <item itemvalue="Gradle.MiniVmTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4f858764-0afb-4ef8-bc5a-298d7d2e0c0a" name="Default Changelist" comment="" />
+      <created>1603084026740</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603084026740</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.txt" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="446" y="35" width="1089" height="789" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607272374168">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="446" y="35" width="1089" height="789" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1607272374168" />
+    <state width="1493" height="206" key="GridCell.Tab.0.bottom" timestamp="1607273261536">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="206" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1607273261536" />
+    <state width="1493" height="206" key="GridCell.Tab.0.center" timestamp="1607273261536">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="206" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1607273261536" />
+    <state width="1493" height="206" key="GridCell.Tab.0.left" timestamp="1607273261536">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="206" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1607273261536" />
+    <state width="1493" height="206" key="GridCell.Tab.0.right" timestamp="1607273261536">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="206" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1607273261536" />
+    <state width="1493" height="443" key="GridCell.Tab.1.bottom" timestamp="1603254242923">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="443" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603254242923" />
+    <state width="1493" height="443" key="GridCell.Tab.1.center" timestamp="1603254242923">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="443" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1603254242923" />
+    <state width="1493" height="443" key="GridCell.Tab.1.left" timestamp="1603254242923">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="443" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1603254242923" />
+    <state width="1493" height="443" key="GridCell.Tab.1.right" timestamp="1603254242923">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="443" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1603254242923" />
+    <state x="468" y="115" width="600" height="594" key="find.popup" timestamp="1607272993656">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="468" y="115" width="600" height="594" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1607272993656" />
+    <state x="178" y="22" key="new project wizard" timestamp="1603167852085">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="178" y="22" key="new project wizard/0.0.1536.824@0.0.1536.824" timestamp="1603167852085" />
+    <state x="425" y="187" key="run.anything.popup" timestamp="1603194660633">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1603194660633" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1603194461688">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1603194461688" />
+  </component>
+</project>
