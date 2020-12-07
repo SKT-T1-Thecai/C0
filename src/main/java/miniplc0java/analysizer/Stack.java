@@ -11,6 +11,10 @@ public SlotType top()
 {
     return stack.get(stack.size()-1);
 }
+public SlotType lower_top()
+    {
+        return stack.get(stack.size()-2);
+    }
 public void push(SlotType st)
 {
     stack.add(st);

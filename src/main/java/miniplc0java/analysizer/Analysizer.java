@@ -103,12 +103,31 @@ public class Analysizer {
     public void analyse_expr_2()
     {
         analyse_expr_3();
+        boolean isAdding;
         while(currentToken().tokenType==TokenType.PLUS||
                 currentToken().tokenType==TokenType.MINUS
         )
         {
+            isAdding = currentToken().tokenType==TokenType.PLUS;
             GoNext();
             analyse_expr_3();
+            // 分为整数相加减 和 浮点数相加减
+
+            if(stack.top()==stack.lower_top()&&stack.top()==SlotType.INT)
+            {
+                String ins = isAdding? "add.i":"sub.i";
+                functionList.add_instruction(ins);
+                stack.pop(SlotType.INT);
+                stack.pop(SlotType.INT);
+                stack.push(SlotType.INT);
+            }
+            else if(stack.top()==stack.lower_top()&&stack.top()==SlotType.DOUBLE)
+            {
+                String ins = isAdding? "add.f":"sub.f";
+                stack.pop(SlotType.DOUBLE);
+                stack.pop(SlotType.DOUBLE);
+                stack.push(SlotType.DOUBLE);
+            }
         }
 
     }
@@ -451,7 +470,8 @@ public class Analysizer {
         expect(TokenType.RETURN_KW);
         if(currentToken().tokenType!=TokenType.SEMICOLON)
         {
-            // 是有返回值的函数，
+            if(functionList.top().return_slot==0)
+                throw new Error("this function should not have return value");
             functionList.add_instruction("arga",Instruction.get_byte_array_by_int(0));
             stack.push(SlotType.ADDR);
 
@@ -460,7 +480,8 @@ public class Analysizer {
             functionList.add_instruction("store.64");
             stack.pop(functionList.top().type);
             stack.pop(SlotType.ADDR);
-        }
+        }else if(functionList.top().return_slot!=0)
+            throw new Error("this function should have return value");
 
         functionList.add_instruction("ret");
         if(functionList.top().name.equals("main")&&functionList.top().type!=VariableType.VOID)
