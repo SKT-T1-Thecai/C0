@@ -45,4 +45,20 @@ public void pop(VariableType vt)//int double
     }
     else throw new Error("undefined error;");
 }
+    public void push(VariableType vt)//int double
+    {
+        if (vt==VariableType.INT)
+        {
+            stack.add(SlotType.INT);
+        }
+        else if (vt==VariableType.DOUBLE)
+        {
+           stack.add(SlotType.DOUBLE);
+        }
+        else throw new Error("void or string cannot be saved in the stack;");
+    }
+public void pop()
+{
+    stack.remove(top());
+}
 }

@@ -12,6 +12,8 @@ public class Analysizer {
     Stack stack = new Stack();
     public FunctionList functionList = new FunctionList();
     public SymbolTable symbolTable = new SymbolTable();
+    static String[] stdio = {
+            "getint","getdouble","getchar","putint","putdouble","putchar","putstr","putln"};
     public Token currentToken()
     {
         return tokenizer.TokenList.get(pos);
@@ -134,12 +136,31 @@ public class Analysizer {
     public void analyse_expr_3()
     {
         analyse_expr_4();
+        boolean isMulting;
         while(currentToken().tokenType==TokenType.MUL||
                 currentToken().tokenType==TokenType.DIV
         )
         {
+            isMulting = currentToken().tokenType==TokenType.MUL;
             GoNext();
-            analyse_expr_4();
+            analyse_expr_3();
+            // 分为整数相乘除 和 浮点数
+
+            if(stack.top()==stack.lower_top()&&stack.top()==SlotType.INT)
+            {
+                String ins = isMulting? "mul.i":"div.i";
+                functionList.add_instruction(ins);
+                stack.pop(SlotType.INT);
+                stack.pop(SlotType.INT);
+                stack.push(SlotType.INT);
+            }
+            else if(stack.top()==stack.lower_top()&&stack.top()==SlotType.DOUBLE)
+            {
+                String ins = isMulting? "mul.f":"div.f";
+                stack.pop(SlotType.DOUBLE);
+                stack.pop(SlotType.DOUBLE);
+                stack.push(SlotType.DOUBLE);
+            }
         }
 
     }
@@ -147,10 +168,17 @@ public class Analysizer {
     {
         analyse_expr_5();
         while(currentToken().tokenType==TokenType.AS_KW
-        )
+        )// 类型转换 itof,ftoi
         {
             GoNext();
-            analyse_type();
+            VariableType type = analyse_type();
+            // 栈顶的值不能参与类型转换
+            if(stack.top()!=SlotType.DOUBLE&&stack.top()!=SlotType.INT)
+                throw new Error("the type on the top of the stack can't be transfered.");
+            else {
+                stack.pop();
+                stack.push(type);
+                 }
         }
 
     }
@@ -180,13 +208,17 @@ public class Analysizer {
     // expr_5 -> -expr_5 | Ident(expr,expr...) |(expr)| 15| 15.6E4 | "sadfasd"
     public void analyse_expr_5()
     {
-        if(currentToken().tokenType==TokenType.MINUS)
+        // 先处理负号
+        boolean isNegative = false;
+        while(currentToken().tokenType==TokenType.MINUS)
         {
             GoNext();
-            analyse_expr_5();
+            isNegative = !isNegative;
         }
-        else if (currentToken().tokenType==TokenType.IDENT)
+
+        if (currentToken().tokenType==TokenType.IDENT)
         {
+            // 函数调用
             if(nextToken().tokenType==TokenType.L_PAREN)
             {
                 GoNext();
@@ -204,16 +236,29 @@ public class Analysizer {
                 }
                 expect(TokenType.R_PAREN);
             }
-            else
-            GoNext();
+            else  // 引用符号表的参数，查询是否存在，并把他的地址放在栈上,load
+            {
+                Variable variable = symbolTable.getVariableByName(currentToken().value.toString());
+                push_variable_address(variable);
+                //如果不是赋值语句 load，否则不load
+                if(nextToken().tokenType!=TokenType.ASSIGN)
+                {
+                    functionList.add_instruction("load.64");
+                    stack.pop(SlotType.ADDR);
+                    stack.push(variable.variableType);
+                }
+                GoNext();
+            }
 
         }
+        // 括号
         else if(currentToken().tokenType==TokenType.L_PAREN)
         {
             expect(TokenType.L_PAREN);
             analyseExpr();
             expect(TokenType.R_PAREN);
         }
+        // 字面量
         else if(currentToken().tokenType==TokenType.UINT_LITERAL)
         {
             //把数据push到栈上
@@ -224,6 +269,10 @@ public class Analysizer {
         else if(currentToken().tokenType==TokenType.DOUBLE_LITERAL)
         {
             //把数据push到栈上
+            functionList.add_instruction("push",Instruction.get_byte_array_by_long(Double.doubleToLongBits(
+                    (double) currentToken().value
+            )));
+            stack.push(SlotType.DOUBLE);
             GoNext();
         }
         else if(currentToken().tokenType==TokenType.STRING_LITERAL)
@@ -232,7 +281,14 @@ public class Analysizer {
             GoNext();
         }
         else throw new Error("error occured pos = "+currentToken().startPos.toString());
-
+        if(isNegative)
+        {
+            if(stack.top()==SlotType.INT)
+                functionList.add_instruction("neg.i");
+            else if(stack.top()==SlotType.DOUBLE)
+                functionList.add_instruction("neg.f");
+            else throw new Error("Address or void cannot be negated.");
+        }
     }
 
     public void analyseExpr() // 表达式
@@ -242,6 +298,12 @@ public class Analysizer {
         {
             GoNext();
             analyse_expr_1();
+            if((stack.top()==SlotType.INT||stack.top()==SlotType.DOUBLE)&&stack.lower_top()==SlotType.ADDR)
+            {
+                functionList.add_instruction("store.64");
+                stack.pop();
+                stack.pop(SlotType.ADDR);
+            }
         }
     }
 
@@ -319,14 +381,13 @@ public class Analysizer {
             System.out.println("Syntax analyse passed.");
         }
         else throw new Error("error pos :"+currentToken().startPos.toString());
+        //_start call main
         functionList.function_list.get(0).instructions.add(new Instruction("call",
                 Instruction.get_byte_array_by_int(functionList.function_list.size()-1)));
-        for(int i=0;i<functionList.function_list.size();i++)
-        {
-            Function f= functionList.function_list.get(i);
-            if(i==0) f.id = functionList.function_list.size()+symbolTable.GlobalVariables().size()-1;
-            else f.id = symbolTable.GlobalVariables().size()+i-1;
-        }
+        symbolTable.symbol_table.get(0).add(new Variable("_start",
+                true,true,false,VariableType.STRING));
+        functionList.function_list.get(0).id = symbolTable.GlobalVariables().size();
+
 
     }
     public void analyse_function_param()
@@ -360,8 +421,13 @@ public class Analysizer {
                 throw new Error("Function name cannot be the same as global variable.");
 
         }
+        // 在函数列表里添加函数
         functionList.addFunction(token.value.toString());
-
+        // 在全局变量里添加函数名 String
+        symbolTable.symbol_table.get(0).add(new Variable(token.value.toString(),true,true,false,
+                VariableType.STRING));
+        // 函数的全局变量序号
+        functionList.top().id = symbolTable.GlobalVariables().size()-1;
         expect(TokenType.L_PAREN);
         symbolTable.addLine();
        if(currentToken().tokenType!=TokenType.R_PAREN)
@@ -384,6 +450,11 @@ public class Analysizer {
 
         isCreatingFunction = true;
         analyse_block_stmt();
+        // void 函数并且没有返回点
+        if(functionList.top().type==VariableType.VOID&&functionList.top().return_point==0)
+        {
+            functionList.add_instruction("ret");
+        }
 
 
     }
@@ -404,7 +475,7 @@ public class Analysizer {
                 currentToken().tokenType == TokenType.DOUBLE_LITERAL ||
                 currentToken().tokenType == TokenType.STRING_LITERAL ||
                 currentToken().tokenType == TokenType.MINUS)
-            {
+            {// a;     a = 123;
                 analyseExpr();
                 expect(TokenType.SEMICOLON);
             }
@@ -487,6 +558,7 @@ public class Analysizer {
         if(functionList.top().name.equals("main")&&functionList.top().type!=VariableType.VOID)
             functionList.add_instruction("stackalloc",Instruction.get_byte_array_by_int(1));
         expect(TokenType.SEMICOLON);
+        functionList.top().return_point+=1;
     }
     public void analyse_block_stmt()
     {
@@ -505,52 +577,39 @@ public class Analysizer {
     public void print_out() throws IOException {
         stream.write(new byte[]{0x72,0x30,0x3B,0x3E,0x00,0x00,0x00,0x01});
         //全局变量数
-        int global_num=symbolTable.GlobalVariables().size()+functionList.function_list.size();
-        System.out.println("GlobalVariableNum: "+(symbolTable.GlobalVariables().size()+functionList.function_list.size()));
+        int global_num=symbolTable.GlobalVariables().size();
+        System.out.println("GlobalVariableNum: "+global_num);
         ArrayList<Byte> bytes = Instruction.get_byte_array_by_int(global_num);
         stream.write(toByteArray(bytes));
 
         // 全局变量
         for(int i=0;i<symbolTable.GlobalVariables().size();i++)
         {
-            System.out.println("isConst: "+symbolTable.GlobalVariables().get(i).isConst);
-            int isConst = symbolTable.GlobalVariables().get(i).isConst? 1:0;
-            stream.write(isConst);
-            System.out.println("length: 8");
-            System.out.println("value: 0");
-            stream.write(toByteArray(Instruction.get_byte_array_by_int(8)));
-            stream.write(toByteArray(Instruction.get_byte_array_by_long(0)));
-            System.out.println(" ");
-        }
-
-        //函数 不带_start
-        for(int i=1;i<functionList.function_list.size();i++)
-        {
-            System.out.println("isConst: 1");
-            stream.write(1);
-            System.out.println("len: "+functionList.function_list.get(i).name.length());
-            stream.write(toByteArray(Instruction.get_byte_array_by_int(functionList.function_list.get(i).name.length())));
-            String name = functionList.function_list.get(i).name;
-            System.out.println("func_name: "+name);
-            for(int index =0;index<name.length();index++)
+            Variable variable = symbolTable.GlobalVariables().get(i);
+            if(variable.variableType==VariableType.STRING)
             {
-                stream.write((int)name.charAt(index));
+                System.out.println("isConst: "+symbolTable.GlobalVariables().get(i).isConst);
+                int isConst = symbolTable.GlobalVariables().get(i).isConst? 1:0;
+                stream.write(isConst);
+                System.out.println("length: "+variable.name.length());
+                System.out.println("value: "+variable.name);
+                stream.write(toByteArray(Instruction.get_byte_array_by_int(variable.name.length())));
+                for(int p=0;p<variable.name.length();p++)
+                    stream.write((int)variable.name.charAt(p));
+                System.out.println(" ");
             }
-            System.out.println(" ");
+            else
+            {
+                System.out.println("isConst: "+symbolTable.GlobalVariables().get(i).isConst);
+                int isConst = symbolTable.GlobalVariables().get(i).isConst? 1:0;
+                stream.write(isConst);
+                System.out.println("length: 8");
+                System.out.println("value: 0");
+                stream.write(toByteArray(Instruction.get_byte_array_by_int(8)));
+                stream.write(toByteArray(Instruction.get_byte_array_by_long(0)));
+                System.out.println(" ");
+            }
         }
-
-        //_start
-        System.out.println("isConst: 1");
-        stream.write(1);
-        System.out.println("len: "+functionList.function_list.get(0).name.length());
-        stream.write(toByteArray(Instruction.get_byte_array_by_int(functionList.function_list.get(0).name.length())));
-        String name = functionList.function_list.get(0).name;
-        System.out.println("func_name: "+name);
-        for(int index =0;index<name.length();index++)
-        {
-            stream.write((int)name.charAt(index));
-        }
-        System.out.println("");
 
         // func_num
         System.out.println("function_num: "+functionList.function_list.size());

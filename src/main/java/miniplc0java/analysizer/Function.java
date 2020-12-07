@@ -8,6 +8,7 @@ public class Function {
     public int return_slot = 0;
     public int param_slot = 0;
     public int local_slot = 0;
+    public int return_point = 0;
     // 局部变量
     public ArrayList<Variable> localVariables = new ArrayList<>();
     // 参数变量

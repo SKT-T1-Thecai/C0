@@ -1,3 +1,5 @@
-fn main() -> int{
-   return ;
+let a:int = 5;
+const b:int = 7;
+fn main() ->void {
+
 }
