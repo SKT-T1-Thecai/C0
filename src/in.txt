@@ -1,5 +1,3 @@
-const num1:int = 5;
-let num2:int = 6;
-fn main() -> int{
-   return 0;
+fn main() -> void{
+   return;
 }

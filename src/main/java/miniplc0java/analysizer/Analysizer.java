@@ -85,7 +85,7 @@ public class Analysizer {
     // expr_4 -> expr_5 { as ty}
     // expr_5 -> -expr_5 | Ident(expr,expr...) |(expr)| 15| 15.6E4 | "sadfasd"
     public void analyse_expr_1()
-    {
+    {// 比较表达式的值只出现在if/while语句中
         analyse_expr_2();
         while(currentToken().tokenType==TokenType.LT||
                 currentToken().tokenType==TokenType.GT||
@@ -215,8 +215,9 @@ public class Analysizer {
         else throw new Error("error occured pos = "+currentToken().startPos.toString());
 
     }
+
     public void analyseExpr() // 表达式
-    {
+    {// 赋值表达式的值是void 不能被使用
         analyse_expr_1();
         while(currentToken().tokenType==TokenType.ASSIGN)
         {
@@ -305,7 +306,7 @@ public class Analysizer {
         {
             Function f= functionList.function_list.get(i);
             if(i==0) f.id = functionList.function_list.size()+symbolTable.GlobalVariables().size()-1;
-            else f.id = i+1;
+            else f.id = symbolTable.GlobalVariables().size()+i-1;
         }
 
     }
@@ -341,6 +342,7 @@ public class Analysizer {
 
         }
         functionList.addFunction(token.value.toString());
+
         expect(TokenType.L_PAREN);
         symbolTable.addLine();
        if(currentToken().tokenType!=TokenType.R_PAREN)
@@ -359,8 +361,6 @@ public class Analysizer {
         if(type == VariableType.DOUBLE || type ==VariableType.INT)
         {
             functionList.set_return_slot();
-            functionList.add_instruction("arga",Instruction.get_byte_array_by_int(0));
-            stack.push(SlotType.ADDR);
         }
 
         isCreatingFunction = true;
@@ -451,13 +451,19 @@ public class Analysizer {
         expect(TokenType.RETURN_KW);
         if(currentToken().tokenType!=TokenType.SEMICOLON)
         {
+            // 是有返回值的函数，
+            functionList.add_instruction("arga",Instruction.get_byte_array_by_int(0));
+            stack.push(SlotType.ADDR);
+
             analyseExpr();
+
+            functionList.add_instruction("store.64");
+            stack.pop(functionList.top().type);
+            stack.pop(SlotType.ADDR);
         }
-        functionList.add_instruction("store.64");
-        stack.pop(functionList.top().type);
-        stack.pop(SlotType.ADDR);
+
         functionList.add_instruction("ret");
-        if(functionList.top().name.equals("main"))
+        if(functionList.top().name.equals("main")&&functionList.top().type!=VariableType.VOID)
             functionList.add_instruction("stackalloc",Instruction.get_byte_array_by_int(1));
         expect(TokenType.SEMICOLON);
     }
