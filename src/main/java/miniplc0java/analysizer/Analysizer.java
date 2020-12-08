@@ -1,4 +1,5 @@
 package miniplc0java.analysizer;
+import com.google.errorprone.annotations.Var;
 import miniplc0java.tokenizer.*;
 
 import java.io.*;
@@ -221,20 +222,34 @@ public class Analysizer {
             // 函数调用
             if(nextToken().tokenType==TokenType.L_PAREN)
             {
-                GoNext();
-                expect(TokenType.L_PAREN);
-                if(currentToken().tokenType!=TokenType.R_PAREN)
+                String function_name = currentToken().value.toString();
+                boolean isStdioFunc = false;
+                for(int i=0;i<8;i++)
                 {
-
-                    analyseExpr();
+                    if(function_name.equals(stdio[i]))
+                    {
+                        isStdioFunc = true;
+                        break;
+                    }
                 }
-                while(currentToken().tokenType!=TokenType.R_PAREN)
+                if(isStdioFunc)
+                    stdio_func();
+                else
                 {
+                    GoNext();
+                    expect(TokenType.L_PAREN);
+                    if(currentToken().tokenType!=TokenType.R_PAREN)
+                    {
+                        analyseExpr();
+                    }
+                    while(currentToken().tokenType!=TokenType.R_PAREN)
+                    {
 
-                    expect(TokenType.COMMA);
-                    analyseExpr();
+                        expect(TokenType.COMMA);
+                        analyseExpr();
+                    }
+                    expect(TokenType.R_PAREN);
                 }
-                expect(TokenType.R_PAREN);
             }
             else  // 引用符号表的参数，查询是否存在，并把他的地址放在栈上,load
             {
@@ -277,7 +292,15 @@ public class Analysizer {
         }
         else if(currentToken().tokenType==TokenType.STRING_LITERAL)
         {
-            //把数据push到栈上
+            //把数据存到全局变量，把全局变量的标号（long）push到栈上
+            String s = currentToken().value.toString();
+            Variable variable = new Variable(s,true,true,false,VariableType.STRING);
+            symbolTable.symbol_table.get(0).add(variable);
+            functionList.addVariable(variable);
+            functionList.add_instruction("push",Instruction.get_byte_array_by_long(
+                    variable.offset
+            ));
+            stack.push(SlotType.INT);
             GoNext();
         }
         else throw new Error("error occured pos = "+currentToken().startPos.toString());
@@ -290,7 +313,72 @@ public class Analysizer {
             else throw new Error("Address or void cannot be negated.");
         }
     }
+    public void stdio_func()
+    {
+        String function_name = currentToken().value.toString();
+        GoNext();
+        if(function_name.equals("getint"))
+        {
+            expect(TokenType.L_PAREN);
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("scan.i");
+            stack.push(SlotType.INT);
+        }
+        else if(function_name.equals("getdouble"))
+        {
+            expect(TokenType.L_PAREN);
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("scan.f");
+            stack.push(SlotType.DOUBLE);
+        }
+        else if(function_name.equals("getchar"))
+        {
+            expect(TokenType.L_PAREN);
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("scan.c");
+            stack.push(SlotType.INT);
+        }
+        else if(function_name.equals("putint"))
+        {
+            expect(TokenType.L_PAREN);
+            analyseExpr();
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("print.i");
+            stack.pop(SlotType.INT);
+        }
+        else if(function_name.equals("putdouble"))
+        {
+            expect(TokenType.L_PAREN);
+            analyseExpr();
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("print.f");
+            stack.pop(SlotType.DOUBLE);
+        }
+        else if(function_name.equals("putchar"))
+        {
+            expect(TokenType.L_PAREN);
+            analyseExpr();
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("print.c");
+            stack.pop(SlotType.INT);
+        }
+        else if(function_name.equals("putstr"))
+        {
+            expect(TokenType.L_PAREN);
+            analyseExpr();
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("print.s");
+            stack.pop(SlotType.INT);
+        }
+        else if(function_name.equals("putln"))
+        {
+            expect(TokenType.L_PAREN);
+            analyseExpr();
+            expect(TokenType.R_PAREN);
+            functionList.add_instruction("println");
+        }
 
+    }
     public void analyseExpr() // 表达式
     {// 赋值表达式的值是void 不能被使用
         analyse_expr_1();
@@ -386,7 +474,7 @@ public class Analysizer {
                 Instruction.get_byte_array_by_int(functionList.function_list.size()-1)));
         symbolTable.symbol_table.get(0).add(new Variable("_start",
                 true,true,false,VariableType.STRING));
-        functionList.function_list.get(0).id = symbolTable.GlobalVariables().size();
+        functionList.function_list.get(0).id = symbolTable.GlobalVariables().size()-1;
 
 
     }
@@ -424,8 +512,10 @@ public class Analysizer {
         // 在函数列表里添加函数
         functionList.addFunction(token.value.toString());
         // 在全局变量里添加函数名 String
-        symbolTable.symbol_table.get(0).add(new Variable(token.value.toString(),true,true,false,
-                VariableType.STRING));
+        Variable variable = new Variable(token.value.toString(),true,true,false,
+                VariableType.STRING);
+        symbolTable.symbol_table.get(0).add(variable);
+        functionList.addVariable(variable);
         // 函数的全局变量序号
         functionList.top().id = symbolTable.GlobalVariables().size()-1;
         expect(TokenType.L_PAREN);

@@ -282,9 +282,28 @@ public class Tokenizer {
                         if(getChar=='\\'&&(readFile.GetNextChar()=='n'||readFile.GetNextChar()=='r'||readFile.GetNextChar()=='t'
                                 ||readFile.GetNextChar()=='\''||readFile.GetNextChar()=='\"'||readFile.GetNextChar()=='\\'))
                         {
-                            sb.append(getChar);
+//                            sb.append(getChar);
+//                            readFile.GoNext();
+//                            sb.append(readFile.GetNowChar());
+//                            readFile.GoNext();
                             readFile.GoNext();
-                            sb.append(readFile.GetNowChar());
+                            char cur = readFile.GetNowChar();
+                            switch (cur)
+                            {
+                                case 'n':sb.append('\n');
+                                break;
+                                case 'r':sb.append('\r');
+                                    break;
+                                case 't':sb.append('\t');
+                                    break;
+                                case '\'':sb.append('\'');
+                                    break;
+                                case '\"':sb.append('\"');
+                                    break;
+                                case '\\':sb.append('\\');
+                                    break;
+                                default:throw new Error("impossible error");
+                            }
                             readFile.GoNext();
                             getChar = readFile.GetNowChar();
                         }

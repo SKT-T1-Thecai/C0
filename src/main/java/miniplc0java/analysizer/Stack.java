@@ -9,7 +9,7 @@ public class Stack {
 public ArrayList<SlotType> stack = new ArrayList<>();
 public SlotType top()
 {
-    return stack.get(stack.size()-1);
+    return stack.size()>0? stack.get(stack.size()-1):null;
 }
 public SlotType lower_top()
     {
