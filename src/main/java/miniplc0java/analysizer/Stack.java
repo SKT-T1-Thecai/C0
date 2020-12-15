@@ -23,7 +23,7 @@ public void pop(SlotType st)
 {
     if(top()==st)
     {
-        stack.remove(top());
+        stack.remove(stack.size()-1);
     }
     else throw new Error(st.toString()+" is not on the top of the stack.");
 }
@@ -59,6 +59,6 @@ public void pop(VariableType vt)//int double
     }
 public void pop()
 {
-    stack.remove(top());
+    stack.remove(stack.size()-1);
 }
 }

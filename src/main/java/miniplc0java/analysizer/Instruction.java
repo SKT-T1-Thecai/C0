@@ -144,6 +144,8 @@ public class Instruction {
                 return 0x58;
             case "panic":
                 return (byte) 0xfe;
+            case "null":
+                return (byte)0xff;
             default:throw new Error("illegal instruction string.");
         }
     }

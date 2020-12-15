@@ -1,18 +1,23 @@
 package miniplc0java.analysizer;
 import com.google.errorprone.annotations.Var;
 import miniplc0java.tokenizer.*;
+import org.checkerframework.checker.units.qual.A;
 
+import javax.print.DocFlavor;
+import java.awt.print.PrinterGraphics;
 import java.io.*;
 import java.util.ArrayList;
 
 public class Analysizer {
     Tokenizer tokenizer;
     int pos;
+    boolean FalseToJump = false;
     boolean isCreatingFunction = false;
     FileOutputStream stream ;
     Stack stack = new Stack();
     public FunctionList functionList = new FunctionList();
     public SymbolTable symbolTable = new SymbolTable();
+    public ArrayList<Integer> brList = new ArrayList<>();
     static String[] stdio = {
             "getint","getdouble","getchar","putint","putdouble","putchar","putstr","putln"};
     public Token currentToken()
@@ -90,16 +95,46 @@ public class Analysizer {
     public void analyse_expr_1()
     {// 比较表达式的值只出现在if/while语句中
         analyse_expr_2();
-        while(currentToken().tokenType==TokenType.LT||
-                currentToken().tokenType==TokenType.GT||
-                currentToken().tokenType==TokenType.GE||
-                currentToken().tokenType==TokenType.LE ||
-                currentToken().tokenType==TokenType.EQ||
-                currentToken().tokenType==TokenType.NEQ
+        while(currentToken().tokenType==TokenType.LT|| //<
+                currentToken().tokenType==TokenType.GT||// >
+                currentToken().tokenType==TokenType.GE||// >=
+                currentToken().tokenType==TokenType.LE ||// <=
+                currentToken().tokenType==TokenType.EQ||// ==
+                currentToken().tokenType==TokenType.NEQ// !=
         )
         {
+            TokenType compareSign = currentToken().tokenType;
             GoNext();
             analyse_expr_2();
+            if(!((stack.top()==SlotType.INT || stack.top()==SlotType.DOUBLE)&&stack.lower_top()==stack.top()))//
+                throw new Error("the type on the stack can't be compared.");
+                functionList.add_instruction(stack.top()==SlotType.INT? "cmp.i":"cmp.f");
+                stack.pop();
+                stack.pop();
+                stack.push(SlotType.BOOL);
+                if(compareSign==TokenType.LT) {
+                    functionList.add_instruction("set.lt");
+                    // 为0跳转 br.false
+                    FalseToJump = true;
+                }else if(compareSign==TokenType.LE) {
+                    functionList.add_instruction("set.gt");
+                    // 不为0跳转
+                    FalseToJump = false;
+                }else if(compareSign==TokenType.GT) {
+                    functionList.add_instruction("set.gt");
+                    // 为0跳转
+                    FalseToJump = true;
+                }else if(compareSign==TokenType.GE) {
+                    functionList.add_instruction("set.lt");
+                    // 不为0跳转
+                    FalseToJump = false;
+                }else if(compareSign==TokenType.EQ) {
+                    // 不为0跳转
+                    FalseToJump = false;
+                }else if(compareSign==TokenType.NEQ) {
+                    //为0 跳转
+                    FalseToJump = true;
+                }
         }
 
     }
@@ -115,7 +150,6 @@ public class Analysizer {
             GoNext();
             analyse_expr_3();
             // 分为整数相加减 和 浮点数相加减
-
             if(stack.top()==stack.lower_top()&&stack.top()==SlotType.INT)
             {
                 String ins = isAdding? "add.i":"sub.i";
@@ -255,13 +289,12 @@ public class Analysizer {
             {
                 Variable variable = symbolTable.getVariableByName(currentToken().value.toString());
                 push_variable_address(variable);
-                //如果不是赋值语句 load，否则不load
-                if(nextToken().tokenType!=TokenType.ASSIGN)
+                if(nextToken().tokenType!=TokenType.ASSIGN)// 不是赋值语句
                 {
                     functionList.add_instruction("load.64");
                     stack.pop(SlotType.ADDR);
                     stack.push(variable.variableType);
-                }
+                }else if(variable.isConst)throw new Error("const variable cannot be assigned.");
                 GoNext();
             }
 
@@ -447,7 +480,6 @@ public class Analysizer {
             stack.pop(SlotType.ADDR);
         }
         expect(TokenType.SEMICOLON);
-
     }
     // program -> decl_stmt* function*
     public void analyseProgram() // 整个程序
@@ -603,7 +635,13 @@ public class Analysizer {
     {
         expect(TokenType.IF_KW);
         analyseExpr();
+        //jump  下一个表达式的命令数
+        functionList.add_instruction(FalseToJump?"br.false":"br.true");
+        brList.add(functionList.top().instructions.size());
         analyse_block_stmt();
+        functionList.add_instruction("br");
+        brList.add(functionList.top().instructions.size());
+        //jump 到末尾的命令数
         if(currentToken().tokenType!=TokenType.ELSE_KW) {
         }
         else {
@@ -615,6 +653,20 @@ public class Analysizer {
             else if (currentToken().tokenType==TokenType.L_BRACE)
             {
                 analyse_block_stmt();
+                brList.add(functionList.top().instructions.size());
+                for(int i=0;i<brList.size()-1;i++)
+                {
+                    Instruction instruction = functionList.top().instructions.get(brList.get(i)-1);
+                    instruction.with_operands = true;
+                    if(i%2==0)
+                    {
+                        instruction.instruction_num = Instruction.get_byte_array_by_int(brList.get(i+1)-brList.get(i));
+                    }
+                    else {
+                        instruction.instruction_num = Instruction.get_byte_array_by_int(-brList.get(i)+brList.get(brList.size()-1));
+                    }
+                }
+                brList.clear();
             }
             else throw new Error("the token follows else must be { or if,token "+currentToken().toString());
         }

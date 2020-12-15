@@ -1,3 +1,10 @@
-fn main() -> void {
-
+fn main() -> void{
+  let a:int = 5;
+   if a>5 {
+   putstr("777");}
+   else if a<=6 {
+   putstr("999");
+   }   else {
+       putstr("999");
+       }
 }
