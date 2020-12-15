@@ -415,7 +415,7 @@ public class Analysizer {
     public void analyseExpr() // 表达式
     {// 赋值表达式的值是void 不能被使用
         analyse_expr_1();
-        while(currentToken().tokenType==TokenType.ASSIGN)
+       if(currentToken().tokenType==TokenType.ASSIGN)
         {
             GoNext();
             analyse_expr_1();
@@ -424,7 +424,7 @@ public class Analysizer {
                 functionList.add_instruction("store.64");
                 stack.pop();
                 stack.pop(SlotType.ADDR);
-            }
+            }else throw new Error("");
         }
     }
 
@@ -657,12 +657,13 @@ public class Analysizer {
                 for(int i=0;i<brList.size()-1;i++)
                 {
                     Instruction instruction = functionList.top().instructions.get(brList.get(i)-1);
-                    instruction.with_operands = true;
                     if(i%2==0)
                     {
+                        instruction.with_operands = true;
                         instruction.instruction_num = Instruction.get_byte_array_by_int(brList.get(i+1)-brList.get(i));
                     }
                     else {
+                        instruction.with_operands = true;
                         instruction.instruction_num = Instruction.get_byte_array_by_int(-brList.get(i)+brList.get(brList.size()-1));
                     }
                 }
