@@ -161,6 +161,7 @@ public class Analysizer {
             else if(stack.top()==stack.lower_top()&&stack.top()==SlotType.DOUBLE)
             {
                 String ins = isAdding? "add.f":"sub.f";
+                functionList.add_instruction(ins);
                 stack.pop(SlotType.DOUBLE);
                 stack.pop(SlotType.DOUBLE);
                 stack.push(SlotType.DOUBLE);
@@ -213,6 +214,10 @@ public class Analysizer {
             if(stack.top()!=SlotType.DOUBLE&&stack.top()!=SlotType.INT)
                 throw new Error("the type on the top of the stack can't be transfered.");
             else {
+                if(stack.top()==SlotType.INT&&type==VariableType.DOUBLE)
+                    functionList.add_instruction("itof");
+                else   if(stack.top()==SlotType.DOUBLE&&type==VariableType.INT)
+                    functionList.add_instruction("ftoi");
                 stack.pop();
                 stack.push(type);
                  }
@@ -875,5 +880,9 @@ public class Analysizer {
             res[i]=bytes.get(i);
         }
         return res;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Instruction.get_byte_array_by_long(Double.doubleToLongBits(0.001)));
     }
 }

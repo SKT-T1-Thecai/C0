@@ -26,7 +26,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/in.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/in.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/analysizer/Analysizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/analysizer/Analysizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Tokenizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miniplc0java/tokenizer/Tokenizer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/out.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/out.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,6 +101,19 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.App">
+    <configuration name="Analysizer (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="miniplc0java.analysizer.Analysizer" />
+      <module name="miniplc0java.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="miniplc0java.analysizer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Analysizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="analysizer.Analysizer" />
       <module name="miniplc0java" />
@@ -149,39 +161,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MiniVmTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;miniplc0java.MiniVmTest&quot;" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Application.App" />
       <item itemvalue="Application.Pos" />
       <item itemvalue="Application.Analysizer" />
       <item itemvalue="Application.App (1)" />
-      <item itemvalue="Gradle.MiniVmTest" />
+      <item itemvalue="Application.Analysizer (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Analysizer (1)" />
         <item itemvalue="Application.App" />
         <item itemvalue="Application.App (1)" />
         <item itemvalue="Application.Analysizer" />
         <item itemvalue="Application.Pos" />
-        <item itemvalue="Gradle.MiniVmTest" />
       </list>
     </recent_temporary>
   </component>
@@ -228,22 +221,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="446" y="10" width="1089" height="814" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1607427860121" />
-    <state width="1493" height="2" key="GridCell.Tab.0.bottom" timestamp="1608218751169">
+    <state width="1493" height="122" key="GridCell.Tab.0.bottom" timestamp="1608221100066">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="2" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608218751169" />
-    <state width="1493" height="2" key="GridCell.Tab.0.center" timestamp="1608218751169">
+    <state width="1493" height="122" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608221100066" />
+    <state width="1493" height="122" key="GridCell.Tab.0.center" timestamp="1608221100066">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="2" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1608218751169" />
-    <state width="1493" height="2" key="GridCell.Tab.0.left" timestamp="1608218751169">
+    <state width="1493" height="122" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1608221100066" />
+    <state width="1493" height="122" key="GridCell.Tab.0.left" timestamp="1608221100066">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="2" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1608218751169" />
-    <state width="1493" height="2" key="GridCell.Tab.0.right" timestamp="1608218751169">
+    <state width="1493" height="122" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1608221100066" />
+    <state width="1493" height="122" key="GridCell.Tab.0.right" timestamp="1608221100066">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="2" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1608218751169" />
+    <state width="1493" height="122" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1608221100066" />
     <state width="1493" height="303" key="GridCell.Tab.1.bottom" timestamp="1608218748059">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
