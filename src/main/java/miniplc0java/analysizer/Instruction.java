@@ -151,38 +151,35 @@ public class Instruction {
     }
     public static long get_num_by_byte_array(ArrayList<Byte> bytes)
     {
-        long ans = 0;
-        for(int i=0;i<bytes.size();i++)
-        {
-            ans = ans*256;
-            ans += ((long)bytes.get(i)+256)%256;
+        long value = 0;
+        // 由高位到低位
+        for (int i = 0; i < bytes.size(); i++) {
+        int shift = (bytes.size() - 1 - i) * 8;
+        value += (bytes.get(i) & 0x000000FF) << shift;// 往高位游
         }
-        return ans;
+        return value;
     }
     public static ArrayList<Byte> get_byte_array_by_int(int a)
     {
-        ArrayList<Byte> bytes = new ArrayList<>();
-        int[] res =new int[4];
-        for(int i=0;i<4;i++)
-        {
-            res[3-i] = a%256;
-            a/=256;
-        }
-        for(int i=0;i<=3;i++)
-            bytes.add((byte)res[i]);
+      ArrayList<Byte> bytes = new ArrayList<>();
+        bytes.add((byte)(a>>> 24));
+        bytes.add((byte)(a>>> 16));
+        bytes.add((byte)(a>>> 8));
+        bytes.add((byte)(a));
         return bytes;
+
     }
     public static ArrayList<Byte> get_byte_array_by_long(long a)
     {
         ArrayList<Byte> bytes = new ArrayList<>();
-        long[] res =new long[8];
-        for(int i=0;i<8;i++)
-        {
-            res[7-i] = a%256;
-            a/=256;
-        }
-        for(int i=0;i<=7;i++)
-            bytes.add((byte)res[i]);
+        bytes.add((byte)(a>>> 56));
+        bytes.add((byte)(a>>> 48));
+        bytes.add((byte)(a>>> 40));
+        bytes.add((byte)(a>>> 32));
+        bytes.add((byte)(a>>> 24));
+        bytes.add((byte)(a>>> 16));
+        bytes.add((byte)(a>>> 8));
+        bytes.add((byte)(a));
         return bytes;
     }
 

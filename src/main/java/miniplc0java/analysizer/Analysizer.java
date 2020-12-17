@@ -192,6 +192,7 @@ public class Analysizer {
             else if(stack.top()==stack.lower_top()&&stack.top()==SlotType.DOUBLE)
             {
                 String ins = isMulting? "mul.f":"div.f";
+                functionList.add_instruction(ins);
                 stack.pop(SlotType.DOUBLE);
                 stack.pop(SlotType.DOUBLE);
                 stack.push(SlotType.DOUBLE);
@@ -270,19 +271,40 @@ public class Analysizer {
                     stdio_func();
                 else
                 {
+                    if(functionList.getFunctionByName(function_name)==null)
+                        throw new Error("Function not exist.");
+                    Function func = functionList.getFunctionByName(function_name);
+                    if(func.return_slot!=0)
+                        functionList.add_instruction("stackalloc",Instruction.get_byte_array_by_int(1));
+                    int stackSize = stack.stack.size();
+                    int paramIndex = 0;// 0 或 1
                     GoNext();
                     expect(TokenType.L_PAREN);
-                    if(currentToken().tokenType!=TokenType.R_PAREN)
+                    if(func.param_slot!=0)
                     {
                         analyseExpr();
+                        if(!(stack.stack.size()==stackSize+1&&Stack.toVT(stack.top())==func.paramVariables.get(paramIndex).variableType))
+                            throw new Error("param error");
+                        stackSize++;
+                        paramIndex++;
                     }
-                    while(currentToken().tokenType!=TokenType.R_PAREN)
+                   for(int i=0;i<func.param_slot-1;i++)
                     {
 
                         expect(TokenType.COMMA);
                         analyseExpr();
+                        if(!(stack.stack.size()==stackSize+1&&Stack.toVT(stack.top())==func.paramVariables.get(paramIndex).variableType))
+                            throw new Error("param error");
+                        stackSize++;
+                        paramIndex++;
                     }
+                   functionList.add_instruction("call",Instruction.get_byte_array_by_int(functionList.getFunctionIndex(func.name)));
                     expect(TokenType.R_PAREN);
+                    for(int i=0;i<func.param_slot;i++)
+                    {
+                        stack.pop();
+                    }
+                    stack.push(func.type);
                 }
             }
             else  // 引用符号表的参数，查询是否存在，并把他的地址放在栈上,load
@@ -312,6 +334,7 @@ public class Analysizer {
             //把数据push到栈上
             functionList.add_instruction("push",Instruction.get_byte_array_by_long((long)currentToken().value));
             stack.push(SlotType.INT);
+            FalseToJump = true;
            GoNext();
         }
         else if(currentToken().tokenType==TokenType.DOUBLE_LITERAL)
@@ -406,7 +429,6 @@ public class Analysizer {
         else if(function_name.equals("putln"))
         {
             expect(TokenType.L_PAREN);
-            analyseExpr();
             expect(TokenType.R_PAREN);
             functionList.add_instruction("println");
         }
@@ -568,6 +590,7 @@ public class Analysizer {
         if(type == VariableType.DOUBLE || type ==VariableType.INT)
         {
             functionList.set_return_slot();
+            functionList.addParamsIndex();
         }
 
         isCreatingFunction = true;
@@ -631,53 +654,59 @@ public class Analysizer {
         }
         else throw new Error("analyse_stmt failed ,pos: "+currentToken().startPos.toString());
     }
-    public void analyse_if_stmt()
+    public int analyse_if_stmt()// 返回if语句结束时instruction的语句数
     {
         expect(TokenType.IF_KW);
         analyseExpr();
-        //jump  下一个表达式的命令数
+        int start_index =  functionList.top().instructions.size();
         functionList.add_instruction(FalseToJump?"br.false":"br.true");
-        brList.add(functionList.top().instructions.size());
+        Instruction afterExpr = functionList.top().instructions.get(functionList.top().instructions.size()-1);
         analyse_block_stmt();
+        int mid_index = functionList.top().instructions.size();
         functionList.add_instruction("br");
-        brList.add(functionList.top().instructions.size());
-        //jump 到末尾的命令数
-        if(currentToken().tokenType!=TokenType.ELSE_KW) {
-        }
-        else {
+        Instruction afterBlock = functionList.top().instructions.get(functionList.top().instructions.size()-1);
+        if(currentToken().tokenType!=TokenType.ELSE_KW)
+        {
+            functionList.top().instructions.remove(afterBlock);
+            afterExpr.with_operands = true;
+            afterExpr.instruction_num = Instruction.get_byte_array_by_int(mid_index-start_index-1);
+            return functionList.top().instructions.size();
+        }else {
             GoNext();
             if(currentToken().tokenType==TokenType.IF_KW)
             {
-                analyse_if_stmt();
+                int res = analyse_if_stmt()-1;
+                afterExpr.with_operands = true;
+                afterExpr.instruction_num = Instruction.get_byte_array_by_int(mid_index-start_index);
+                afterBlock.with_operands = true;
+                afterBlock.instruction_num = Instruction.get_byte_array_by_int(res-mid_index);
+                return res;
             }
-            else if (currentToken().tokenType==TokenType.L_BRACE)
-            {
+            else {
                 analyse_block_stmt();
-                brList.add(functionList.top().instructions.size());
-                for(int i=0;i<brList.size()-1;i++)
-                {
-                    Instruction instruction = functionList.top().instructions.get(brList.get(i)-1);
-                    if(i%2==0)
-                    {
-                        instruction.with_operands = true;
-                        instruction.instruction_num = Instruction.get_byte_array_by_int(brList.get(i+1)-brList.get(i));
-                    }
-                    else {
-                        instruction.with_operands = true;
-                        instruction.instruction_num = Instruction.get_byte_array_by_int(-brList.get(i)+brList.get(brList.size()-1));
-                    }
-                }
-                brList.clear();
+                int end_index = functionList.top().instructions.size()-1;
+                afterExpr.with_operands = true;
+                afterExpr.instruction_num = Instruction.get_byte_array_by_int(mid_index-start_index);
+                afterBlock.with_operands = true;
+                afterBlock.instruction_num = Instruction.get_byte_array_by_int(end_index-mid_index);
+                return functionList.top().instructions.size();
             }
-            else throw new Error("the token follows else must be { or if,token "+currentToken().toString());
         }
-
     }
     public void analyse_while_stmt()
     {
         expect(TokenType.WHILE_KW);
+        int start_index = functionList.top().instructions.size();
         analyseExpr();
+        int origin_index = functionList.top().instructions.size();
+        functionList.add_instruction(FalseToJump?"br.false":"br.true");
         analyse_block_stmt();
+        int end_index  = functionList.top().instructions.size();
+        functionList.add_instruction("br");
+        functionList.top().instructions.get(origin_index).with_operands = true;
+        functionList.top().instructions.get(origin_index).instruction_num = Instruction.get_byte_array_by_int(end_index-origin_index);
+        functionList.top().instructions.get(end_index).with_operands = true;
+        functionList.top().instructions.get(end_index).instruction_num = Instruction.get_byte_array_by_int(start_index-end_index-1 );
     }
     public void analyse_return_stmt()
     {
@@ -694,7 +723,8 @@ public class Analysizer {
             functionList.add_instruction("store.64");
             stack.pop(functionList.top().type);
             stack.pop(SlotType.ADDR);
-        }else if(functionList.top().return_slot!=0)
+        }else// return ;
+            if(functionList.top().return_slot!=0)
             throw new Error("this function should have return value");
 
         functionList.add_instruction("ret");
@@ -731,8 +761,8 @@ public class Analysizer {
             Variable variable = symbolTable.GlobalVariables().get(i);
             if(variable.variableType==VariableType.STRING)
             {
-                System.out.println("isConst: "+symbolTable.GlobalVariables().get(i).isConst);
                 int isConst = symbolTable.GlobalVariables().get(i).isConst? 1:0;
+                System.out.println("isConst: "+ isConst);
                 stream.write(isConst);
                 System.out.println("length: "+variable.name.length());
                 System.out.println("value: "+variable.name);
@@ -776,7 +806,7 @@ public class Analysizer {
             for(int j=0;j<f.instructions.size();j++)
             {
                 Instruction instruction = f.instructions.get(j);
-                System.out.print(instruction.instruction_name);
+                System.out.print(j+" "+instruction.instruction_name);
                 stream.write(instruction.instruction_byte);
                 System.out.print(" ");
                 if(instruction.with_operands)

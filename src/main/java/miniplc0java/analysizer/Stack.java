@@ -23,6 +23,7 @@ public void pop(SlotType st)
 {
     if(top()==st)
     {
+
         stack.remove(stack.size()-1);
     }
     else throw new Error(st.toString()+" is not on the top of the stack.");
@@ -33,14 +34,14 @@ public void pop(VariableType vt)//int double
     {
         if(top()==SlotType.INT)
         {
-            stack.remove(top());
+            stack.remove(stack.size()-1);
         }else throw new Error("INT slot is not on the stack;");
     }
     else if (vt==VariableType.DOUBLE)
     {
         if(top()==SlotType.DOUBLE)
         {
-            stack.remove(top());
+            stack.remove(stack.size()-1);
         }else throw new Error("DOUBLE slot is not on the stack;");
     }
     else throw new Error("undefined error;");
@@ -60,5 +61,13 @@ public void pop(VariableType vt)//int double
 public void pop()
 {
     stack.remove(stack.size()-1);
+}
+public static  VariableType toVT(SlotType ST)
+{
+if(ST==SlotType.INT)
+    return VariableType.INT;
+if(ST==SlotType.DOUBLE)
+    return VariableType.DOUBLE;
+else return null;
 }
 }
