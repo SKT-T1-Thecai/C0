@@ -183,7 +183,7 @@ public class Tokenizer {
                 case '*':
                     readFile.GoNext();
                     endPos = readFile.NowPos;
-                    return new Token(TokenType.MINUS,beginSign,startPos,endPos);
+                    return new Token(TokenType.MUL,beginSign,startPos,endPos);
                 case '(':
                     readFile.GoNext();
                     endPos = readFile.NowPos;

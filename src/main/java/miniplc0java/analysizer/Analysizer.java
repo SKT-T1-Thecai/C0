@@ -142,8 +142,8 @@ public class Analysizer {
     {
         analyse_expr_3();
         boolean isAdding;
-        while(currentToken().tokenType==TokenType.PLUS||
-                currentToken().tokenType==TokenType.MINUS
+        Token t=currentToken();
+        while(currentToken().tokenType==TokenType.PLUS|| currentToken().tokenType==TokenType.MINUS
         )
         {
             isAdding = currentToken().tokenType==TokenType.PLUS;
@@ -172,13 +172,14 @@ public class Analysizer {
     {
         analyse_expr_4();
         boolean isMulting;
+        Token token =currentToken();
         while(currentToken().tokenType==TokenType.MUL||
                 currentToken().tokenType==TokenType.DIV
         )
         {
             isMulting = currentToken().tokenType==TokenType.MUL;
             GoNext();
-            analyse_expr_3();
+            analyse_expr_4();
             // 分为整数相乘除 和 浮点数
 
             if(stack.top()==stack.lower_top()&&stack.top()==SlotType.INT)
