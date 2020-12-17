@@ -61,6 +61,8 @@ public class Analysizer {
     public void GoNext()
     {
         pos+=1;
+        while (currentToken().tokenType==TokenType.COMMENT)
+            pos+=1;
     }
     public Analysizer(String inputSrc,String out) throws IOException {
         tokenizer = new Tokenizer(inputSrc);
@@ -310,6 +312,7 @@ public class Analysizer {
                     {
                         stack.pop();
                     }
+                    if (func.type!=VariableType.VOID)
                     stack.push(func.type);
                 }
             }

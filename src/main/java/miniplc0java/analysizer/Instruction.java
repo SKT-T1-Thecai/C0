@@ -1,5 +1,7 @@
 package miniplc0java.analysizer;
 
+import miniplc0java.tokenizer.Tokenizer;
+
 import java.util.ArrayList;
 
 public class Instruction {
@@ -106,7 +108,7 @@ public class Instruction {
                 return 0x35;
             case "itof":
                 return 0x36;
-            case "foti":
+            case "ftoi":
                 return 0x37;
             case "shrl":
                 return 0x38;
@@ -146,7 +148,8 @@ public class Instruction {
                 return (byte) 0xfe;
             case "null":
                 return (byte)0xff;
-            default:throw new Error("illegal instruction string.");
+            default:
+                throw new Error("illegal instruction string.");
         }
     }
     public static long get_num_by_byte_array(ArrayList<Byte> bytes)
@@ -184,11 +187,7 @@ public class Instruction {
     }
 
     public static void main(String[] args) {
-        ArrayList<Byte> bytes = get_byte_array_by_long((long)256*256*256*127*256);
-        for(int i=0;i<bytes.size();i++)
-        {
-            System.out.println(((int)(bytes.get(i))+256)%256);
-        }
+
 
     }
 
