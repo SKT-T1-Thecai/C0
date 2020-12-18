@@ -118,6 +118,10 @@ public class Instruction {
                 return 0x3a;
             case "br":
                 return 0x41;
+            case "break":
+                return 0x41;
+            case "continue":
+                return 0x41;
             case "br.false":
                 return 0x42;
             case "br.true":

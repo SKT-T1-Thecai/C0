@@ -17,7 +17,6 @@ public class Analysizer {
     Stack stack = new Stack();
     public FunctionList functionList = new FunctionList();
     public SymbolTable symbolTable = new SymbolTable();
-    public ArrayList<Integer> brList = new ArrayList<>();
     static String[] stdio = {
             "getint","getdouble","getchar","putint","putdouble","putchar","putstr","putln"};
     public Token currentToken()
@@ -48,6 +47,7 @@ public class Analysizer {
             stack.push(SlotType.ADDR);
         }
     }
+    public  ArrayList<Integer> whileStartIndexList = new ArrayList<>();
     public Token expect(TokenType tt)
     {
         if(currentToken().tokenType==tt)
@@ -655,6 +655,24 @@ public class Analysizer {
         {
             GoNext();
         }
+        else if(currentToken().tokenType==TokenType.BREAK_KW)
+        {
+            if(whileStartIndexList.size()==0)
+                throw new Error("it's not in a loop now!");
+            GoNext();
+            expect(TokenType.SEMICOLON);
+            functionList.add_instruction("break");
+        }
+        else if(currentToken().tokenType==TokenType.CONTINUE_KW)
+        {
+            if(whileStartIndexList.size()==0)
+                throw new Error("it's not in a loop now!");
+            GoNext();
+            expect(TokenType.SEMICOLON);
+            int det = whileStartIndexList.get(whileStartIndexList.size()-1)-functionList.top().instructions.size()-1;
+            functionList.add_instruction("br",Instruction.get_byte_array_by_int(det));
+        }
+
         else throw new Error("analyse_stmt failed ,pos: "+currentToken().startPos.toString());
     }
     public int analyse_if_stmt()// 返回if语句结束时instruction的语句数
@@ -700,11 +718,23 @@ public class Analysizer {
     {
         expect(TokenType.WHILE_KW);
         int start_index = functionList.top().instructions.size();
+        whileStartIndexList.add(start_index);//记录while开始的地方 continue的时候直接跳到这里
         analyseExpr();
         int origin_index = functionList.top().instructions.size();
         functionList.add_instruction(FalseToJump?"br.false":"br.true");
         analyse_block_stmt();
-        int end_index  = functionList.top().instructions.size();
+        int end_index  = functionList.top().instructions.size();//循环里的所有break跳到这里
+        for(int i=start_index;i<end_index;i++)
+        {
+            Instruction instruction= functionList.top().instructions.get(i);
+            if(instruction.instruction_name.equals("break"))
+            {
+                instruction.with_operands=true;
+                instruction.instruction_num = Instruction.get_byte_array_by_int(end_index-i);
+                instruction.instruction_name="br";
+            }
+        }
+        whileStartIndexList.remove(whileStartIndexList.size()-1);
         functionList.add_instruction("br");
         functionList.top().instructions.get(origin_index).with_operands = true;
         functionList.top().instructions.get(origin_index).instruction_num = Instruction.get_byte_array_by_int(end_index-origin_index);
