@@ -323,21 +323,22 @@ public class Tokenizer {
                 case '\'':// 字符串字面量
                     readFile.GoNext();
                     char getChar0 = readFile.GetNowChar();
-                    StringBuilder sb0 = new StringBuilder();
-                    while (CheckCharType.isCharLiteralChar(getChar0))
+                    long value = 0;
+                    if (CheckCharType.isCharLiteralChar(getChar0))
                     {
                         if(getChar0=='\\'&&(readFile.GetNextChar()=='n'||readFile.GetNextChar()=='r'||readFile.GetNextChar()=='t'
                                 ||readFile.GetNextChar()=='\''||readFile.GetNextChar()=='\"'||readFile.GetNextChar()=='\\'))
                         {
-                            sb0.append(getChar0);
                             readFile.GoNext();
-                            sb0.append(readFile.GetNowChar());
+                            char nowChar = readFile.GetNowChar();
+                            if(nowChar=='n')value='\n';else if(nowChar=='r')value='\r';else if(nowChar=='t')value='\t';
+                            else value=nowChar;
                             readFile.GoNext();
                             getChar0 = readFile.GetNowChar();
                         }
                         else
                         {
-                            sb0.append(getChar0);
+                            value = getChar0;
                             readFile.GoNext();
                             getChar0 = readFile.GetNowChar();
                         }
@@ -346,7 +347,7 @@ public class Tokenizer {
                     {
                         readFile.GoNext();
                         endPos = readFile.NowPos;
-                        return  new Token(TokenType.CHAR_LITERAL,sb0.toString(),startPos,endPos);
+                        return  new Token(TokenType.UINT_LITERAL,value,startPos,endPos);
                     }else throw new Error("failed while tokenizers:location--> row:"+readFile.NowPos.row+"col:"+readFile.NowPos.col);
                 case '/':if(readFile.GetNextChar()=='/')
                             {

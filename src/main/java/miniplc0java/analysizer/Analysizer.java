@@ -570,7 +570,6 @@ public class Analysizer {
         {
             if(token.value.toString().equals(global_variables.get(i).name))
                 throw new Error("Function name cannot be the same as global variable.");
-
         }
         // 在函数列表里添加函数
         functionList.addFunction(token.value.toString());
@@ -604,23 +603,18 @@ public class Analysizer {
 
         isCreatingFunction = true;
         analyse_block_stmt();
-        // void 函数并且没有返回点
-        if(functionList.top().type==VariableType.VOID&&functionList.top().return_point==0)
+        // void 函数最后一句不是return
+        if(functionList.top().type==VariableType.VOID&&!functionList.top().topInstruction().instruction_name.equals("ret"))
         {
             functionList.add_instruction("ret");
+        }
+        if(functionList.top().name.equals("main")&&functionList.top().type!=VariableType.VOID)
+        {
+            functionList.add_instruction("stackalloc");
         }
 
 
     }
-//    stmt ->
-//    expr_stmt IDENT  (  int double  string -
-//    | decl_stmt  const or let
-//    | if_stmt    if
-//    | while_stmt while
-//    | return_stmt return
-//    | block_stmt {
-//    | empty_stmt ;
-
     public void analyse_stmt()//语句
     {
         if (currentToken().tokenType == TokenType.IDENT ||
@@ -737,8 +731,6 @@ public class Analysizer {
             throw new Error("this function should have return value");
 
         functionList.add_instruction("ret");
-        if(functionList.top().name.equals("main")&&functionList.top().type!=VariableType.VOID)
-            functionList.add_instruction("stackalloc",Instruction.get_byte_array_by_int(1));
         expect(TokenType.SEMICOLON);
         functionList.top().return_point+=1;
     }

@@ -20,4 +20,8 @@ public class Function {
         this.name = name;
     }
     public ArrayList<Instruction> instructions = new ArrayList<>();
+    public Instruction topInstruction()
+    {
+        return instructions.get(instructions.size()-1);
+    }
 }
